@@ -1,2 +1,4 @@
 .*.sw?
 .idea
+logs
+target
