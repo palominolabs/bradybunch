@@ -18,7 +18,12 @@ public class BradyBunchConfiguration extends Configuration {
 
     @Valid
     @NotNull
+    @JsonProperty("database")
     private DataSourceFactory database = new DataSourceFactory();
+
+    public DataSourceFactory getDataSourceFactory() {
+        return database;
+    }
 
     @JsonProperty
     public String getTemplate() {
@@ -42,15 +47,5 @@ public class BradyBunchConfiguration extends Configuration {
 
     public Template buildTemplate() {
         return new Template(template, defaultName);
-    }
-
-    @JsonProperty("database")
-    public DataSourceFactory getDataSourceFactory() {
-        return database;
-    }
-
-    @JsonProperty("database")
-    public void setDataSourceFactory(DataSourceFactory dataSourceFactory) {
-        this.database = dataSourceFactory;
     }
 }

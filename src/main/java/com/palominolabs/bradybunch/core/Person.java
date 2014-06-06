@@ -15,7 +15,7 @@ import java.security.spec.InvalidKeySpecException;
 @Table(name = "people")
 @NamedQueries({
     @NamedQuery(
-        name = "com.example.helloworld.core.Person.findEmail",
+        name = "com.palominolabs.bradybunch.core.Person.findByEmail",
         query = "SELECT p FROM Person p WHERE p.email = :email"
     )
 })
