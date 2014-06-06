@@ -4,13 +4,14 @@ import com.palominolabs.bradybunch.core.Person;
 
 import io.dropwizard.views.View;
 
-public class PersonView extends View {
+public class ChatView extends View {
     private final Person person;
+
     public enum Template{
-    	FREEMARKER("freemarker/person.ftl"),
-    	MUSTACHE("mustache/person.mustache");
-    	
+    	FREEMARKER("freemarker/chat.ftl");
+
     	private String templateName;
+
     	private Template(String templateName){
     		this.templateName = templateName;
     	}
@@ -20,7 +21,7 @@ public class PersonView extends View {
     	}
     }
 
-    public PersonView(PersonView.Template template, Person person) {
+    public ChatView(ChatView.Template template, Person person) {
         super(template.getTemplateName());
         this.person = person;
     }

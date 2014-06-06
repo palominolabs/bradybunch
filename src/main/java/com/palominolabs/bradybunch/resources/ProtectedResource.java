@@ -2,6 +2,7 @@ package com.palominolabs.bradybunch.resources;
 
 import com.google.common.base.Charsets;
 import com.palominolabs.bradybunch.core.Person;
+import com.palominolabs.bradybunch.views.ChatView;
 import io.dropwizard.auth.Auth;
 import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.views.View;
@@ -15,10 +16,10 @@ import javax.ws.rs.core.MediaType;
 @Produces(MediaType.TEXT_PLAIN)
 public class ProtectedResource {
     @GET
-    @Produces("text/html;charset=UTF-8")
+//    @Produces("text/html;charset=UTF-8")
+    @Produces(MediaType.TEXT_HTML)
     @UnitOfWork
-    public View chat(@Auth Person person) {
-        return new View("/assets/chat.html", Charsets.UTF_8) {
-        };
+    public ChatView chat(@Auth Person person) {
+        return new ChatView(ChatView.Template.FREEMARKER, person);
     }
 }
