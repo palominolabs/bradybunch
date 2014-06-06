@@ -1,18 +1,22 @@
 package com.palominolabs.bradybunch.resources;
 
-import com.palominolabs.bradybunch.core.User;
-import com.yammer.dropwizard.auth.Auth;
+import com.google.common.base.Charsets;
+import com.palominolabs.bradybunch.core.Person;
+import io.dropwizard.auth.Auth;
+import io.dropwizard.views.View;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-@Path("/protected")
+@Path("/")
 @Produces(MediaType.TEXT_PLAIN)
 public class ProtectedResource {
     @GET
-    public String showSecret(@Auth User user) {
-        return String.format("Hey there, %s. You know the secret!", user.getName());
+    @Produces("text/html;charset=UTF-8")
+    public View chat(@Auth Person person) {
+        return new View("/assets/chat.html", Charsets.UTF_8) {
+        };
     }
 }

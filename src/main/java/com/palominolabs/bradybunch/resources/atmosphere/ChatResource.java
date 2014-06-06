@@ -16,7 +16,7 @@ import javax.ws.rs.core.MediaType;
  * Time: 11:20 PM
  * To change this template use File | Settings | File Templates.
  */
-@Path("/")
+@Path("/chat")
 public class ChatResource {
     @Suspend(contentType = MediaType.APPLICATION_JSON)
     @GET

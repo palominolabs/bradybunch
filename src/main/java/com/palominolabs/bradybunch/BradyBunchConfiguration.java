@@ -1,9 +1,9 @@
 package com.palominolabs.bradybunch;
 
-import com.palominolabs.bradybunch.core.Template;
-import com.yammer.dropwizard.config.Configuration;
-import com.yammer.dropwizard.db.DatabaseConfiguration;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.palominolabs.bradybunch.core.Template;
+import io.dropwizard.Configuration;
+import io.dropwizard.db.DataSourceFactory;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
@@ -11,22 +11,25 @@ import javax.validation.constraints.NotNull;
 
 public class BradyBunchConfiguration extends Configuration {
     @NotEmpty
-    private String template;
-    
-    @NotEmpty
     private String defaultName = "Stranger";
+
+//    @Valid
+//    @NotNull
+//    @JsonProperty("database")
+//    private DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration();
 
     @Valid
     @NotNull
-    @JsonProperty("database")
-    private DatabaseConfiguration databaseConfiguration = new DatabaseConfiguration();
+    private DataSourceFactory database = new DataSourceFactory();
 
-    public String getTemplate() {
-        return template;
+    @JsonProperty("database")
+    public DataSourceFactory getDataSourceFactory() {
+        return database;
     }
 
-    public void setTemplate(String template) {
-        this.template = template;
+    @JsonProperty("database")
+    public void setDataSourceFactory(DataSourceFactory dataSourceFactory) {
+        this.database = dataSourceFactory;
     }
 
     public String getDefaultName() {
@@ -35,17 +38,5 @@ public class BradyBunchConfiguration extends Configuration {
 
     public void setDefaultName(String defaultName) {
         this.defaultName = defaultName;
-    }
-
-    public Template buildTemplate() {
-        return new Template(template, defaultName);
-    }
-
-    public DatabaseConfiguration getDatabaseConfiguration() {
-        return databaseConfiguration;
-    }
-
-    public void setDatabaseConfiguration(DatabaseConfiguration databaseConfiguration) {
-        this.databaseConfiguration = databaseConfiguration;
     }
 }
