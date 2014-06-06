@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.palominolabs.bradybunch.core.Saying;
 import com.palominolabs.bradybunch.core.Template;
 import com.google.common.base.Optional;
+import io.dropwizard.hibernate.UnitOfWork;
 import io.dropwizard.jersey.caching.CacheControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

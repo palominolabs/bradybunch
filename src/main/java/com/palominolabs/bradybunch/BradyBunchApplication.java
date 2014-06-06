@@ -1,7 +1,7 @@
 package com.palominolabs.bradybunch;
 
 import com.palominolabs.bradybunch.auth.PersonAuthenticator;
-import com.palominolabs.bradybunch.cli.RenderCommand;
+import com.palominolabs.bradybunch.cli.CreateUser;
 import com.palominolabs.bradybunch.core.Person;
 import com.palominolabs.bradybunch.core.Template;
 import com.palominolabs.bradybunch.db.PersonDAO;
@@ -18,7 +18,8 @@ import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
-import org.hibernate.SessionFactory;
+
+import java.util.Arrays;
 
 public class BradyBunchApplication extends Application<BradyBunchConfiguration> {
     public static void main(String[] args) throws Exception {
@@ -39,7 +40,8 @@ public class BradyBunchApplication extends Application<BradyBunchConfiguration> 
 
     @Override
     public void initialize(Bootstrap<BradyBunchConfiguration> bootstrap) {
-        bootstrap.addCommand(new RenderCommand());
+        bootstrap.addCommand(new CreateUser());
+
         bootstrap.addBundle(new AssetsBundle());
         bootstrap.addBundle(new MigrationsBundle<BradyBunchConfiguration>() {
             @Override
