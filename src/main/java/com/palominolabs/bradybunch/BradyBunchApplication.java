@@ -3,10 +3,7 @@ package com.palominolabs.bradybunch;
 import com.palominolabs.bradybunch.auth.PersonAuthenticator;
 import com.palominolabs.bradybunch.cli.CreateUser;
 import com.palominolabs.bradybunch.core.Person;
-import com.palominolabs.bradybunch.core.Template;
 import com.palominolabs.bradybunch.db.PersonDAO;
-import com.palominolabs.bradybunch.health.TemplateHealthCheck;
-import com.palominolabs.bradybunch.resources.HelloWorldResource;
 import com.palominolabs.bradybunch.resources.ProtectedResource;
 import com.palominolabs.bradybunch.resources.ViewResource;
 import io.dropwizard.Application;
@@ -18,8 +15,6 @@ import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
-
-import java.util.Arrays;
 
 public class BradyBunchApplication extends Application<BradyBunchConfiguration> {
     public static void main(String[] args) throws Exception {
@@ -56,13 +51,8 @@ public class BradyBunchApplication extends Application<BradyBunchConfiguration> 
     @Override
     public void run(BradyBunchConfiguration configuration, Environment environment) throws ClassNotFoundException {
         final PersonDAO personDao = new PersonDAO(hibernateBundle.getSessionFactory());
-        final Template template = configuration.buildTemplate();
-
-        environment.healthChecks().register("template", new TemplateHealthCheck(template));
-
         environment.jersey().register(new BasicAuthProvider<>(new PersonAuthenticator(personDao), "SUPER SECRET STUFF"));
 
-        environment.jersey().register(new HelloWorldResource(template));
         environment.jersey().register(new ViewResource());
         environment.jersey().register(new ProtectedResource());
     }

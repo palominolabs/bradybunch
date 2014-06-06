@@ -7,7 +7,7 @@ import io.dropwizard.views.View;
 public class ChatView extends View {
     private final Person person;
 
-    public enum Template{
+    public enum Template {
     	FREEMARKER("freemarker/chat.ftl");
 
     	private String templateName;
