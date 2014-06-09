@@ -1,7 +1,7 @@
 <#-- @ftlvariable name="" type="com.example.views.ChatView" -->
 <!DOCTYPE html>
 
-<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
 <script type="text/javascript" src="/assets/js/jquery.atmosphere.js"></script>
 <script type="text/javascript" src="/assets/js/application.js"></script>
 
