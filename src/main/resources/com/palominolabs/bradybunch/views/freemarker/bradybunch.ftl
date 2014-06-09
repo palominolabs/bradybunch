@@ -15,12 +15,12 @@
 
 <body>
 
+<!-- TODO vars for URI, version -->
 <div id="brady-screen"
-     <!-- TODO -->
      data-uri="localhost/chat"
      data-default-image="/assets/logo.png"
      data-version="7"
-     data-users="${people}"
+     data-users="${people?html}"
 >
     <div class="brady-row">
         <div class="brady" square-id="0" data-member-email="">
@@ -107,7 +107,7 @@
                 email = '${currentUser.email?html}!}',
                 name = '${currentUser.name?html}!}',
                 bradyContainer = $('#brady-screen'),
-                dispatcher = new WebSocketRails(bradyContainer.data('uri')),
+                dispatcher = $.atmosphere,
                 videoRequiredMask = $('#video-required-mask'),
                 version = bradyContainer.data('version');
 
