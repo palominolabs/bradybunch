@@ -6,6 +6,8 @@ import io.dropwizard.hibernate.AbstractDAO;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 
+import java.util.List;
+
 public class PersonDAO extends AbstractDAO<Person> {
     public PersonDAO(SessionFactory factory) {
         super(factory);
@@ -19,5 +21,9 @@ public class PersonDAO extends AbstractDAO<Person> {
 
     public Person create(Person person) {
         return persist(person);
+    }
+
+    public List<Person> findAll() {
+        return list(namedQuery("com.palominolabs.bradybunch.core.Person.findAll"));
     }
 }

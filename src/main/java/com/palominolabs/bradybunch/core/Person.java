@@ -17,6 +17,10 @@ import java.security.spec.InvalidKeySpecException;
     @NamedQuery(
         name = "com.palominolabs.bradybunch.core.Person.findByEmail",
         query = "SELECT p FROM Person p WHERE p.email = :email"
+    ),
+    @NamedQuery(
+        name = "com.palominolabs.bradybunch.core.Person.findAll",
+        query = "SELECT p FROM Person p"
     )
 })
 public class Person {
@@ -30,6 +34,9 @@ public class Person {
 
     @Column(name = "email", nullable = false)
     private String email;
+
+    @Column(name = "name", nullable = false)
+    private String name;
 
     @Column(name = "password", nullable = false)
     private String password;
@@ -48,6 +55,14 @@ public class Person {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public boolean isCorrectPassword(String password) {

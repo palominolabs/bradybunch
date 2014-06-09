@@ -1,5 +1,6 @@
 package com.palominolabs.bradybunch;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.palominolabs.bradybunch.auth.PersonAuthenticator;
 import com.palominolabs.bradybunch.cli.CreateUser;
 import com.palominolabs.bradybunch.core.Person;
@@ -54,10 +55,12 @@ public class BradyBunchApplication extends Application<BradyBunchConfiguration> 
     @Override
     public void run(BradyBunchConfiguration configuration, Environment environment) throws ClassNotFoundException {
         final PersonDAO personDao = new PersonDAO(hibernateBundle.getSessionFactory());
+        final ObjectMapper objectMapper = new ObjectMapper();
+
         environment.jersey().register(new BasicAuthProvider<>(new PersonAuthenticator(personDao), "SUPER SECRET STUFF"));
 
         environment.jersey().register(new ViewResource());
-        environment.jersey().register(new ProtectedResource());
+        environment.jersey().register(new ProtectedResource(personDao, objectMapper));
 
         initializeAtmosphere(configuration, environment);
     }
