@@ -6,7 +6,6 @@ import com.palominolabs.bradybunch.core.Person;
 import com.palominolabs.bradybunch.db.PersonDAO;
 import com.palominolabs.bradybunch.resources.ProtectedResource;
 import com.palominolabs.bradybunch.resources.ViewResource;
-import com.palominolabs.bradybunch.resources.atmosphere.ChatResource;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.auth.basic.BasicAuthProvider;
@@ -59,7 +58,6 @@ public class BradyBunchApplication extends Application<BradyBunchConfiguration> 
 
         environment.jersey().register(new ViewResource());
         environment.jersey().register(new ProtectedResource());
-        environment.jersey().register(new ChatResource());
 
         initializeAtmosphere(configuration, environment);
     }

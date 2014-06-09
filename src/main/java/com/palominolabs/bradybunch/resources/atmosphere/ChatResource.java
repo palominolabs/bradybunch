@@ -11,7 +11,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-@Path("/chat")
+// Root of the Atmosphere controlled portion
+@Path("/")
 public class ChatResource {
     @Suspend(contentType = MediaType.APPLICATION_JSON)
     @GET
