@@ -6,6 +6,7 @@ import com.palominolabs.bradybunch.core.Person;
 import com.palominolabs.bradybunch.db.PersonDAO;
 import com.palominolabs.bradybunch.resources.ProtectedResource;
 import com.palominolabs.bradybunch.resources.ViewResource;
+import com.palominolabs.bradybunch.resources.atmosphere.ChatResource;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.auth.basic.BasicAuthProvider;
@@ -15,6 +16,9 @@ import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.dropwizard.views.ViewBundle;
+import org.atmosphere.cpr.AtmosphereServlet;
+
+import javax.servlet.ServletRegistration;
 
 public class BradyBunchApplication extends Application<BradyBunchConfiguration> {
     public static void main(String[] args) throws Exception {
@@ -55,5 +59,20 @@ public class BradyBunchApplication extends Application<BradyBunchConfiguration> 
 
         environment.jersey().register(new ViewResource());
         environment.jersey().register(new ProtectedResource());
+        environment.jersey().register(new ChatResource());
+
+        initializeAtmosphere(configuration, environment);
+    }
+
+    private void initializeAtmosphere(BradyBunchConfiguration configuration, Environment environment) {
+//        FilterBuilder fconfig = environment.servlets().addFilter(CrossOriginFilter.class, "/chat");
+//        fconfig.setInitParam(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
+
+        AtmosphereServlet atmosphereServlet = new AtmosphereServlet();
+        atmosphereServlet.framework().addInitParameter("com.sun.jersey.config.property.packages", "com.palominolabs.bradybunch.resources.atmosphere");
+        atmosphereServlet.framework().addInitParameter("org.atmosphere.websocket.messageContentType", "application/json");
+        ServletRegistration.Dynamic dynamic = environment.servlets().addServlet("/chat/*", atmosphereServlet);
+        dynamic.setAsyncSupported(true);
+        dynamic.addMapping("/chat/*");
     }
 }
