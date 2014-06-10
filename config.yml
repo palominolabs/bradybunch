@@ -42,5 +42,6 @@ logging:
   loggers:
     com.example.app: DEBUG
     org.hibernate.SQL: ALL
+    org.atmosphere: DEBUG
   appenders:
     - type: console

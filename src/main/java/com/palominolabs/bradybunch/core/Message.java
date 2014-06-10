@@ -1,24 +1,28 @@
 package com.palominolabs.bradybunch.core;
 
-/**
- * Created with IntelliJ IDEA.
- * User: coder
- * Date: 4/8/13
- * Time: 11:27 PM
- * To change this template use File | Settings | File Templates.
- */
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class Message {
-    public String author = "";
-    public String message = "";
+    @JsonProperty("type")
+    final String type;
 
-    public Message(){
-    }
+    @JsonProperty("email")
+    final String email;
 
-    public Message(String author, String message) {
-        this.author = author;
-        this.message = message;
+    @JsonProperty("name")
+    final String name;
+
+    @JsonProperty("snapshot")
+    final String snapshot;
+
+    public Message(@JsonProperty("type") String type, @JsonProperty("email") String email,
+        @JsonProperty("name") String name, @JsonProperty("snapshot") String snapshot) {
+        this.type = type;
+        this.email = email;
+        this.name = name;
+        this.snapshot = snapshot;
     }
 }

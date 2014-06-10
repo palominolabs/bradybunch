@@ -17,7 +17,6 @@
 
 <!-- TODO vars for URI, version -->
 <div id="brady-screen"
-     data-uri="localhost/chat"
      data-default-image="/assets/logo.png"
      data-version="7"
      data-users="${people?html}"
@@ -104,13 +103,13 @@
 <script>
     $(document).on('ready', function () {
         var brady = BradyBunchRails.Brady,
-                email = '${currentUser.email?html}!}',
-                name = '${currentUser.name?html}!}',
+                email = '${currentUser.email?html}',
+                name = '${currentUser.name?html}',
                 bradyContainer = $('#brady-screen'),
-                dispatcher = $.atmosphere,
+                atmosphere = $.atmosphere,
+                websocketUrl = 'chat/palomino',
                 videoRequiredMask = $('#video-required-mask'),
                 version = bradyContainer.data('version');
-
 
         videoRequiredMask.show();
 
@@ -123,7 +122,7 @@
             document.location.href=document.location.href;
         });
 
-        brady.initialize($, bradyContainer, dispatcher, email, name, bradyContainer.data('default-image'), version);
+        brady.initialize($, bradyContainer, websocketUrl, atmosphere, email, name, bradyContainer.data('default-image'), version);
 
         brady.start();
     });

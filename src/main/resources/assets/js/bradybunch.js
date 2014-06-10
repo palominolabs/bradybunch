@@ -3,7 +3,7 @@ BradyBunchRails.Brady = {};
 
 BradyBunchRails.Brady.$ = undefined;
 BradyBunchRails.Brady._container = undefined;
-BradyBunchRails.Brady._dispatcher = undefined;
+BradyBunchRails.Brady._atmosphere = undefined;
 BradyBunchRails.Brady._email = undefined;
 BradyBunchRails.Brady._name = undefined;
 BradyBunchRails.Brady._switchSourceButton = undefined;
@@ -25,7 +25,7 @@ BradyBunchRails.Brady._reconnectTimeoutIds = [];
 BradyBunchRails.Brady._squareAssignments = [];
 BradyBunchRails.Brady._users = {};
 
-BradyBunchRails.Brady.initialize = function ($, bradyContainer, dispatcher, email, name, defaultImage, version) {
+BradyBunchRails.Brady.initialize = function ($, bradyContainer, websocketUrl, atmosphere, email, name, defaultImage, version) {
     var brady = BradyBunchRails.Brady;
 
     brady.$ = $;
@@ -38,7 +38,8 @@ BradyBunchRails.Brady.initialize = function ($, bradyContainer, dispatcher, emai
 
     BradyBunchRails.Brady._videoEl = brady._container.find('video')[0];
     BradyBunchRails.Brady._canvasEl = brady._container.find('canvas')[0];
-    BradyBunchRails.Brady._dispatcher = dispatcher;
+    BradyBunchRails.Brady._atmosphere = atmosphere;
+    BradyBunchRails.Brady._websocketUrl = websocketUrl;
     BradyBunchRails.Brady._email = email;
     BradyBunchRails.Brady._name = name;
     BradyBunchRails.Brady._defaultImage = defaultImage;
@@ -60,15 +61,24 @@ BradyBunchRails.Brady.subscribe = function () {
     brady._squareAssignments.sort();
     brady.assignSquares();
 
-    brady._channel = brady._dispatcher.subscribe_private('palomino', function (msg) {
-        brady.$(brady).trigger('authenticated');
+    brady._channel = brady._atmosphere.subscribe({
+        url: brady._websocketUrl,
+        contentType: 'application/json',
+        logLevel: 'debug',
+        transport: 'websocket',
+        onOpen: function (msg) {
+            brady.$(brady).trigger('authenticated');
 
-        $(window).on('beforeunload', brady.leave);
+            $(window).on('beforeunload', brady.leave);
 
-        brady._channel.bind('update_room', brady.handleRoomUpdate);
-        brady._channel.bind('leave', brady.handleLeave);
+//            brady._channel.onMessage(brady.handleMessage(msg));
 
-        brady._dispatcher.bind('connection_closed', function () {
+//            brady._reapIntervalId = setInterval(brady.reap, 11000);
+//            brady._versionIntervalId = setInterval(brady.checkVersion, 11000);
+//            brady._reviveIntervalId = setInterval(brady.revive, 13000);
+        },
+        onMessage: brady.handleMessage,
+        onClose: function () {
             if (brady._reconnectTimeoutIds.length === 0) {
                 console.log('Detected connection closed');
                 var retries = 3;
@@ -77,9 +87,9 @@ BradyBunchRails.Brady.subscribe = function () {
                     brady._reconnectTimeoutIds.push(setTimeout(function () {
                         if (brady._reconnectTimeoutIds.length > 0) {
                             brady._reconnectTimeoutIds.pop();
-                            if (brady._dispatcher.state != 'connected') {
+                            if (brady._atmosphere.state != 'connected') {
                                 console.log('Retry attempt ' + (retries - brady._reconnectTimeoutIds.length) + ' of ' + retries);
-                                brady._dispatcher.reconnect();
+                                brady._atmosphere.reconnect();
                             } else {
                                 console.log('Connection re-established');
                                 while (brady._reconnectTimeoutIds.length > 0) {
@@ -90,18 +100,28 @@ BradyBunchRails.Brady.subscribe = function () {
                     }, i * 10000));
                 }
             }
-        });
-
-        brady._reapIntervalId = setInterval(brady.reap, 11000);
-        brady._versionIntervalId = setInterval(brady.checkVersion, 11000);
-        brady._reviveIntervalId = setInterval(brady.revive, 13000);
-    }, function (msg) {
-        brady.$(brady).trigger('authenticationfailed');
+        },
+        onError: function (msg) {
+            brady.$(brady).trigger('authenticationfailed');
+        }
     });
 };
 
+BradyBunchRails.Brady.handleMessage = function(msg) {
+    var brady = BradyBunchRails.Brady;
+        message = $.parseJSON(msg.responseBody);
+        type = message.type;
+    debugger;
+
+    if (type === 'update_room') {
+        brady.handleRoomUpdate(msg.data)
+    } else if (type === 'leave') {
+        brady.handleLeave(msg.data);
+    }
+};
+
 BradyBunchRails.Brady.revive = function () {
-    BradyBunchRails.Brady._dispatcher.reconnect_channels();
+    BradyBunchRails.Brady._atmosphere.reconnect_channels();
 };
 
 BradyBunchRails.Brady.start = function () {
@@ -126,8 +146,12 @@ BradyBunchRails.Brady.stop = function () {
 
 BradyBunchRails.Brady.leave = function () {
     var brady = BradyBunchRails.Brady;
-    brady._channel.trigger('leave', {
-        email: brady._email
+    brady._channel.push({
+        url: brady._websocketUrl,
+        data: {
+            type: 'leave',
+            email: brady._email
+        }
     });
 };
 
@@ -182,11 +206,13 @@ BradyBunchRails.Brady.snap = function () {
 
     brady._mySnapshot = brady.takeSnapshot();
 
-    brady._channel.trigger('update_room', {
+    var data = {
+        type: 'update_room',
         email: brady._email,
         name: brady._name,
         snapshot: brady._mySnapshot
-    });
+    };
+    brady._channel.push($.stringifyJSON(data));
 };
 
 BradyBunchRails.Brady.handleRoomUpdate = function (data) {
@@ -378,7 +404,7 @@ BradyBunchRails.Brady.snapshotQueueIsConstant = function (queue) {
 BradyBunchRails.Brady.checkVersion = function () {
     var brady = BradyBunchRails.Brady;
 
-    brady._dispatcher.trigger('version', {}, function (msg) {
+    brady._atmosphere.trigger('version', {}, function (msg) {
         if (msg.version != brady._version) {
             console.log('Detected outdated version.');
             brady.forceReload();
