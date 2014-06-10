@@ -1,5 +1,7 @@
 package com.palominolabs.bradybunch.resources.atmosphere;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Throwables;
 import com.palominolabs.bradybunch.EventsLogger;
 import com.palominolabs.bradybunch.core.Message;
 import com.sun.jersey.multipart.FormDataParam;
@@ -18,6 +20,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
 
 // Root of the Atmosphere controlled portion
 @Path("/{topic}")
@@ -37,10 +40,18 @@ public class ChatResource {
     }
 
     @POST
-    @Broadcast
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Produces(MediaType.APPLICATION_JSON)
-    public Broadcastable publish(@FormDataParam("message") Message message) {
-        return new Broadcastable(message, "", topic);
+    @Broadcast//(writeEntity = true)
+//    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces("application/json")
+    public Broadcastable publish(@FormParam("message") String stringMessage) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            Message message = objectMapper.readValue(stringMessage, Message.class);
+            return new Broadcastable(message, "", topic);
+        } catch (IOException e) {
+            logger.warn("Couldn't decode message: " + stringMessage);
+        }
+
+        return null;
     }
 }

@@ -63,7 +63,8 @@ BradyBunchRails.Brady.subscribe = function () {
 
     brady._channel = brady._atmosphere.subscribe({
         url: brady._websocketUrl,
-        contentType: 'application/json',
+        method: 'POST',
+//        contentType: 'application/json',
         logLevel: 'debug',
         transport: 'websocket',
         onOpen: function (msg) {
@@ -212,7 +213,8 @@ BradyBunchRails.Brady.snap = function () {
         name: brady._name,
         snapshot: brady._mySnapshot
     };
-    brady._channel.push($.stringifyJSON(data));
+    debugger;
+    brady._channel.push({data: "message=" + $.stringifyJSON(data)});
 };
 
 BradyBunchRails.Brady.handleRoomUpdate = function (data) {
