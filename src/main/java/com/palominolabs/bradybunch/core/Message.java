@@ -2,9 +2,6 @@ package com.palominolabs.bradybunch.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement
 public class Message {
     @JsonProperty("type")
     final String type;

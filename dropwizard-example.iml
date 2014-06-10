@@ -134,6 +134,8 @@
     <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-common:9.0.7.v20131107" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-client:9.0.7.v20131107" level="project" />
     <orderEntry type="library" name="Maven: org.eclipse.jetty.websocket:websocket-servlet:9.0.7.v20131107" level="project" />
+    <orderEntry type="library" name="Maven: com.sun.jersey.contribs:jersey-multipart:1.18.1" level="project" />
+    <orderEntry type="library" name="Maven: org.jvnet.mimepull:mimepull:1.9.3" level="project" />
     <orderEntry type="library" name="Maven: org.atmosphere:atmosphere-jersey:2.1.5" level="project" />
     <orderEntry type="library" name="Maven: org.atmosphere:atmosphere-annotations:2.1.5" level="project" />
     <orderEntry type="library" name="Maven: org.atmosphere:atmosphere-runtime:2.1.5" level="project" />
