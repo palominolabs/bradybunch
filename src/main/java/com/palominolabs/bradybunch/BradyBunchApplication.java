@@ -19,6 +19,7 @@ import io.dropwizard.views.ViewBundle;
 import org.atmosphere.cpr.AtmosphereServlet;
 
 import javax.servlet.ServletRegistration;
+import javax.ws.rs.core.MediaType;
 
 public class BradyBunchApplication extends Application<BradyBunchConfiguration> {
     public static void main(String[] args) throws Exception {
@@ -71,7 +72,7 @@ public class BradyBunchApplication extends Application<BradyBunchConfiguration> 
 
         AtmosphereServlet atmosphereServlet = new AtmosphereServlet();
         atmosphereServlet.framework().addInitParameter("com.sun.jersey.config.property.packages", "com.palominolabs.bradybunch.resources.atmosphere");
-        atmosphereServlet.framework().addInitParameter("org.atmosphere.websocket.messageContentType", "application/json");
+        atmosphereServlet.framework().addInitParameter("org.atmosphere.websocket.messageContentType", MediaType.APPLICATION_JSON);
         ServletRegistration.Dynamic dynamic = environment.servlets().addServlet("/chat/*", atmosphereServlet);
         dynamic.setAsyncSupported(true);
         dynamic.addMapping("/chat/*");

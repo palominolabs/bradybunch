@@ -6,8 +6,10 @@ import com.palominolabs.bradybunch.EventsLogger;
 import com.palominolabs.bradybunch.core.Message;
 import com.sun.jersey.multipart.FormDataParam;
 import org.atmosphere.annotation.Broadcast;
+import org.atmosphere.config.service.AtmosphereService;
 import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.jersey.Broadcastable;
+import org.atmosphere.jersey.JerseyBroadcaster;
 import org.atmosphere.jersey.SuspendResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,12 +44,12 @@ public class ChatResource {
     @POST
     @Broadcast//(writeEntity = true)
 //    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     public Broadcastable publish(@FormParam("message") String stringMessage) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             Message message = objectMapper.readValue(stringMessage, Message.class);
-            return new Broadcastable(message, "", topic);
+            return new Broadcastable(objectMapper.writeValueAsString(message), "", topic);
         } catch (IOException e) {
             logger.warn("Couldn't decode message: " + stringMessage);
         }

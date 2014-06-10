@@ -63,8 +63,7 @@ BradyBunchRails.Brady.subscribe = function () {
 
     brady._channel = brady._atmosphere.subscribe({
         url: brady._websocketUrl,
-        method: 'POST',
-//        contentType: 'application/json',
+        contentType: 'application/json',
         logLevel: 'debug',
         transport: 'websocket',
         onOpen: function (msg) {
@@ -109,15 +108,14 @@ BradyBunchRails.Brady.subscribe = function () {
 };
 
 BradyBunchRails.Brady.handleMessage = function(msg) {
-    var brady = BradyBunchRails.Brady;
-        message = $.parseJSON(msg.responseBody);
+    var brady = BradyBunchRails.Brady,
+        message = $.parseJSON(msg.responseBody),
         type = message.type;
-    debugger;
 
     if (type === 'update_room') {
-        brady.handleRoomUpdate(msg.data)
+        brady.handleRoomUpdate(message)
     } else if (type === 'leave') {
-        brady.handleLeave(msg.data);
+        brady.handleLeave(message);
     }
 };
 
@@ -213,7 +211,6 @@ BradyBunchRails.Brady.snap = function () {
         name: brady._name,
         snapshot: brady._mySnapshot
     };
-    debugger;
     brady._channel.push({data: "message=" + $.stringifyJSON(data)});
 };
 
