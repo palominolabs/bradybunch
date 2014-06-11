@@ -184,14 +184,13 @@ BradyBunchRails.Brady.stop = function () {
 };
 
 BradyBunchRails.Brady.leave = function () {
-    var brady = BradyBunchRails.Brady;
-    brady._channel.push({
-        url: brady._websocketUrl,
-        data: {
+    var brady = BradyBunchRails.Brady,
+        data = {
             type: 'leave',
-            email: brady._email
-        }
-    });
+            email: brady._email,
+            snapshot: null
+        };
+    brady._channel.push($.stringifyJSON(data));
 };
 
 BradyBunchRails.Brady.startVideo = function () {
@@ -248,7 +247,6 @@ BradyBunchRails.Brady.snap = function () {
     var data = {
         type: 'update_room',
         email: brady._email,
-        name: brady._name,
         snapshot: brady._mySnapshot
     };
     brady._channel.push($.stringifyJSON(data));

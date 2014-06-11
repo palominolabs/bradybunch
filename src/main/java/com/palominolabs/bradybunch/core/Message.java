@@ -2,6 +2,8 @@ package com.palominolabs.bradybunch.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.annotation.Nullable;
+
 public class Message {
     @JsonProperty("type")
     final String type;
@@ -9,17 +11,14 @@ public class Message {
     @JsonProperty("email")
     final String email;
 
-    @JsonProperty("name")
-    final String name;
-
     @JsonProperty("snapshot")
+    @Nullable
     final String snapshot;
 
     public Message(@JsonProperty("type") String type, @JsonProperty("email") String email,
-        @JsonProperty("name") String name, @JsonProperty("snapshot") String snapshot) {
+                    @JsonProperty("snapshot") String snapshot) {
         this.type = type;
         this.email = email;
-        this.name = name;
         this.snapshot = snapshot;
     }
 }
