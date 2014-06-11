@@ -72,7 +72,7 @@ BradyBunchRails.Brady.subscribe = function () {
 
             $(window).on('beforeunload', brady.leave);
 
-//            brady._reapIntervalId = setInterval(brady.reap, 11000);
+            brady._reapIntervalId = setInterval(brady.reap, 11000);
 //            brady._versionIntervalId = setInterval(brady.checkVersion, 11000);
 //            brady._reviveIntervalId = setInterval(brady.revive, 13000);
         },
