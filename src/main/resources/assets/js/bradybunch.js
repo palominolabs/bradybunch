@@ -67,6 +67,7 @@ BradyBunchRails.Brady.subscribe = function () {
         contentType: 'application/json',
         logLevel: 'debug',
         transport: 'websocket',
+        reconnectInterval: 10000,
         onOpen: function (msg) {
             brady.$(brady).trigger('authenticated');
 
@@ -77,30 +78,11 @@ BradyBunchRails.Brady.subscribe = function () {
 //            brady._reviveIntervalId = setInterval(brady.revive, 13000);
         },
         onMessage: brady.handleMessage,
-        onClose: function () {
-            if (brady._reconnectTimeoutIds.length === 0) {
-                console.log('Detected connection closed');
-                var retries = 3;
-
-                for (var i = 1; i <= retries; i++) {
-                    brady._reconnectTimeoutIds.push(setTimeout(function () {
-                        if (brady._reconnectTimeoutIds.length > 0) {
-                            brady._reconnectTimeoutIds.pop();
-                            if (brady._atmosphere.state != 'connected') {
-                                console.log('Retry attempt ' + (retries - brady._reconnectTimeoutIds.length) + ' of ' + retries);
-                                brady._atmosphere.reconnect();
-                            } else {
-                                console.log('Connection re-established');
-                                while (brady._reconnectTimeoutIds.length > 0) {
-                                    clearTimeout(brady._reconnectTimeoutIds.pop());
-                                }
-                            }
-                        }
-                    }, i * 10000));
-                }
-            }
+        onReconnect: function (request, response) {
+            console.log("Reconnected");
         },
         onError: function (msg) {
+            console.log("Connection error");
             brady.$(brady).trigger('authenticationfailed');
         }
     });
