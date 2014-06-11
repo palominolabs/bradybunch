@@ -24,7 +24,7 @@ BradyBunchRails.Brady._versionIntervalId = undefined;
 BradyBunchRails.Brady._reconnectTimeoutIds = [];
 BradyBunchRails.Brady._squareAssignments = [];
 BradyBunchRails.Brady._users = {};
-BradyBunchRails.Brady._incomingMessageBuffer = "";
+BradyBunchRails.Brady._messageBuffer = "";
 
 BradyBunchRails.Brady.initialize = function ($, bradyContainer, websocketUrl, atmosphere, email, name, defaultImage, version) {
     var brady = BradyBunchRails.Brady;
@@ -111,39 +111,44 @@ BradyBunchRails.Brady.handleMessage = function(msg) {
         body = msg.responseBody.split('|')[1],
         message;
 
-    try {
-        message = $.parseJSON(body);
-    } catch (e) {
-        if (e.name === "SyntaxError" && e.message === "Unexpected end of input") {
-            // New message
-            brady._incomingMessageBuffer = body;
-
-            return;
-        } else if (e.name === "SyntaxError" && e.message.indexOf("Unexpected token ") === 0) {
-            // Continuation
-            brady._incomingMessageBuffer += body;
-
-            // See if it parses now
-            try {
-                message = $.parseJSON(brady._incomingMessageBuffer);
-            } catch (e) {
-                if (e.name === "SyntaxError" && e.message === "Unexpected end of input") {
-                    return;
-                } else {
-                    // Unexpected error
-                    console.log("Error parsing JSON: ", e);
-                    console.log("Buffer was: " + brady._incomingMessageBuffer);
-                    return;
-                }
+    if (brady._messageBuffer === "") {
+        // New message
+        try {
+            message = $.parseJSON(body);
+        } catch (e) {
+            // Not a full message
+            if (e.name === "SyntaxError" && e.message === "Unexpected end of input") {
+                // Store it in the buffer
+                brady._messageBuffer = body;
+                return;
+            } else {
+                // Unexpected error
+                console.log("Error parsing JSON; clearing buffer: ", e);
+                console.log("Buffer was empty");
+                console.log("New message: " + body);
+                brady._messageBuffer = "";
+                return;
             }
-        } else {
-            // Unexpected error
-            console.log("Error parsing JSON; clearing buffer: ", e);
-            console.log("Buffer was: " + brady._incomingMessageBuffer);
-            console.log("New message: " + body);
+        }
+    } else {
+        // Continuation; add to the buffer
+        brady._messageBuffer += body;
 
-            brady._incomingMessageBuffer = "";
-            return;
+        // See if it parses now
+        try {
+            message = $.parseJSON(brady._messageBuffer);
+            // Clear the buffer
+            brady._messageBuffer = "";
+        } catch (e) {
+            if (e.name === "SyntaxError" && e.message === "Unexpected end of input") {
+                // Still not a full message
+                return;
+            } else {
+                // Unexpected error
+                console.log("Error parsing JSON: ", e);
+                console.log("Buffer is: " + brady._messageBuffer);
+                return;
+            }
         }
     }
 
