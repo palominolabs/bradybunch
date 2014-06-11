@@ -24,6 +24,7 @@ BradyBunchRails.Brady._versionIntervalId = undefined;
 BradyBunchRails.Brady._reconnectTimeoutIds = [];
 BradyBunchRails.Brady._squareAssignments = [];
 BradyBunchRails.Brady._users = {};
+BradyBunchRails.Brady._incomingMessageBuffer = "";
 
 BradyBunchRails.Brady.initialize = function ($, bradyContainer, websocketUrl, atmosphere, email, name, defaultImage, version) {
     var brady = BradyBunchRails.Brady;
@@ -71,8 +72,6 @@ BradyBunchRails.Brady.subscribe = function () {
 
             $(window).on('beforeunload', brady.leave);
 
-//            brady._channel.onMessage(brady.handleMessage(msg));
-
 //            brady._reapIntervalId = setInterval(brady.reap, 11000);
 //            brady._versionIntervalId = setInterval(brady.checkVersion, 11000);
 //            brady._reviveIntervalId = setInterval(brady.revive, 13000);
@@ -109,12 +108,48 @@ BradyBunchRails.Brady.subscribe = function () {
 
 BradyBunchRails.Brady.handleMessage = function(msg) {
     var brady = BradyBunchRails.Brady,
-        message = $.parseJSON(msg.responseBody),
-        type = message.type;
+        body = msg.responseBody.split('|')[1],
+        message;
 
-    if (type === 'update_room') {
+    try {
+        message = $.parseJSON(body);
+    } catch (e) {
+        if (e.name === "SyntaxError" && e.message === "Unexpected end of input") {
+            // New message
+            brady._incomingMessageBuffer = body;
+
+            return;
+        } else if (e.name === "SyntaxError" && e.message.indexOf("Unexpected token ") === 0) {
+            // Continuation
+            brady._incomingMessageBuffer += body;
+
+            // See if it parses now
+            try {
+                message = $.parseJSON(brady._incomingMessageBuffer);
+            } catch (e) {
+                if (e.name === "SyntaxError" && e.message === "Unexpected end of input") {
+                    return;
+                } else {
+                    // Unexpected error
+                    console.log("Error parsing JSON: ", e);
+                    console.log("Buffer was: " + brady._incomingMessageBuffer);
+                    return;
+                }
+            }
+        } else {
+            // Unexpected error
+            console.log("Error parsing JSON; clearing buffer: ", e);
+            console.log("Buffer was: " + brady._incomingMessageBuffer);
+            console.log("New message: " + body);
+
+            brady._incomingMessageBuffer = "";
+            return;
+        }
+    }
+
+    if (message.type === 'update_room') {
         brady.handleRoomUpdate(message)
-    } else if (type === 'leave') {
+    } else if (message.type === 'leave') {
         brady.handleLeave(message);
     }
 };
@@ -196,7 +231,7 @@ BradyBunchRails.Brady.takeSnapshot = function () {
 
     if (brady._localMediaStream) {
         brady._ctx.drawImage(brady._videoEl, 0, 0, 300, 150);
-        return brady._canvasEl.toDataURL('image/webp');
+        return brady._canvasEl.toDataURL('image/jpeg');
     }
 };
 
@@ -211,7 +246,7 @@ BradyBunchRails.Brady.snap = function () {
         name: brady._name,
         snapshot: brady._mySnapshot
     };
-    brady._channel.push({data: "message=" + $.stringifyJSON(data)});
+    brady._channel.push($.stringifyJSON(data));
 };
 
 BradyBunchRails.Brady.handleRoomUpdate = function (data) {
@@ -245,7 +280,7 @@ BradyBunchRails.Brady.handleRoomUpdate = function (data) {
         square.removeClass('idle');
     }
 
-    brady.updateSquare(square, email, data.snapshot, data.name);
+    brady.updateSquare(square, email, data.snapshot);
     brady.addHappyDance(square, email);
     brady.recordUpdate(data);
 };
@@ -341,13 +376,13 @@ BradyBunchRails.Brady.clearSquares = function () {
     for (var i = 0; i < squares.length; i++) {
         var square = brady.$(squares[i]);
 
-        brady.updateSquare(square, '', brady._defaultImage, '');
+        brady.updateSquare(square, '', brady._defaultImage);
         square.unbind('mouseenter');
         square.unbind('mouseleave');
     }
 };
 
-BradyBunchRails.Brady.updateSquare = function (square, email, src, name) {
+BradyBunchRails.Brady.updateSquare = function (square, email, src) {
     var overlay = square.find('.call-overlay'),
         facetimeUrl = '';
 

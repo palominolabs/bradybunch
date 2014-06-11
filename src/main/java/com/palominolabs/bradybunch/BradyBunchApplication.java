@@ -20,9 +20,12 @@ import org.atmosphere.cpr.AtmosphereServlet;
 
 import javax.servlet.ServletRegistration;
 import javax.ws.rs.core.MediaType;
+import java.util.Properties;
 
 public class BradyBunchApplication extends Application<BradyBunchConfiguration> {
     public static void main(String[] args) throws Exception {
+//        Properties properties = System.getProperties();
+//        properties.setProperty("com.sun.jersey.core.util.ReaderWriter.BufferSize", "131072");
         new BradyBunchApplication().run(args);
     }
 
@@ -67,12 +70,13 @@ public class BradyBunchApplication extends Application<BradyBunchConfiguration> 
     }
 
     private void initializeAtmosphere(BradyBunchConfiguration configuration, Environment environment) {
-//        FilterBuilder fconfig = environment.servlets().addFilter(CrossOriginFilter.class, "/chat");
-//        fconfig.setInitParam(CrossOriginFilter.ALLOWED_ORIGINS_PARAM, "*");
-
         AtmosphereServlet atmosphereServlet = new AtmosphereServlet();
         atmosphereServlet.framework().addInitParameter("com.sun.jersey.config.property.packages", "com.palominolabs.bradybunch.resources.atmosphere");
         atmosphereServlet.framework().addInitParameter("org.atmosphere.websocket.messageContentType", MediaType.APPLICATION_JSON);
+//        atmosphereServlet.framework().addInitParameter("org.atmosphere.websocket.bufferSize", "131072");
+//        atmosphereServlet.framework().addInitParameter("org.atmosphere.websocket.webSocketBufferingMaxSize ", "131072");
+//        atmosphereServlet.framework().addInitParameter("org.atmosphere.websocket.maxTextMessageSize", "131072");
+//        atmosphereServlet.framework().addInitParameter("org.atmosphere.websocket.maxBinaryBufferSize", "131072");
         ServletRegistration.Dynamic dynamic = environment.servlets().addServlet("/chat/*", atmosphereServlet);
         dynamic.setAsyncSupported(true);
         dynamic.addMapping("/chat/*");
