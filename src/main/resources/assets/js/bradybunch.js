@@ -27,7 +27,8 @@ BradyBunchRails.Brady._users = {};
 BradyBunchRails.Brady._messageBuffer = "";
 
 BradyBunchRails.Brady.initialize = function ($, bradyContainer, websocketUrl, atmosphere, email, name, defaultImage, version) {
-    var brady = BradyBunchRails.Brady;
+    var brady = BradyBunchRails.Brady,
+        users = JSON.parse($('#brady-screen').attr('data-users'));
 
     brady.$ = $;
     brady._container = $(bradyContainer);
@@ -47,20 +48,19 @@ BradyBunchRails.Brady.initialize = function ($, bradyContainer, websocketUrl, at
     BradyBunchRails.Brady._ctx = BradyBunchRails.Brady._canvasEl.getContext('2d');
     BradyBunchRails.Brady._version = version;
 
-    brady.subscribe();
-};
-
-BradyBunchRails.Brady.subscribe = function () {
-    var brady = BradyBunchRails.Brady,
-        users = JSON.parse($('#brady-screen').attr('data-users'));
-
-    // Set users from what Rails provides
+    // Set users from what the server provides
     users.forEach(function(user) {
         brady._squareAssignments.push(user.email);
         brady._users[user.email] = user.name;
     });
     brady._squareAssignments.sort();
     brady.assignSquares();
+
+    brady.subscribe();
+};
+
+BradyBunchRails.Brady.subscribe = function () {
+    var brady = BradyBunchRails.Brady;
 
     brady._channel = brady._atmosphere.subscribe({
         url: brady._websocketUrl,

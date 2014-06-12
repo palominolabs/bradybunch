@@ -20,7 +20,6 @@ import org.atmosphere.cpr.AtmosphereServlet;
 
 import javax.servlet.ServletRegistration;
 import javax.ws.rs.core.MediaType;
-import java.util.Properties;
 
 public class BradyBunchApplication extends Application<BradyBunchConfiguration> {
     public static void main(String[] args) throws Exception {

@@ -16,9 +16,7 @@
 
 <body>
 
-<!-- TODO vars for URI, version -->
 <div id="brady-screen"
-     data-default-image="/assets/logo.png"
      data-version="7"
      data-users="${people?html}"
 >
@@ -123,7 +121,7 @@
             document.location.href=document.location.href;
         });
 
-        brady.initialize($, bradyContainer, websocketUrl, atmosphere, email, name, bradyContainer.data('default-image'), version);
+        brady.initialize($, bradyContainer, websocketUrl, atmosphere, email, name, '/assets/logo.png', version);
 
         brady.start();
     });

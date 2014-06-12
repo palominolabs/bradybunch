@@ -10,7 +10,7 @@ import java.util.List;
 
 public class BradyBunchView extends View {
     private String people;
-    private Person currentUser;
+    private final Person currentUser;
 
     public enum Template {
     	FREEMARKER("freemarker/bradybunch.ftl");

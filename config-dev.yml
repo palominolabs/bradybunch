@@ -1,0 +1,25 @@
+database:
+  driverClass: com.mysql.jdbc.Driver
+  user: bradybunch
+  password: bradybunch
+  url: jdbc:mysql://localhost/bradybunch
+  properties:
+    charSet: UTF-8
+    hibernate.dialect: org.hibernate.dialect.MySQLDialect
+
+server:
+  type: simple
+  applicationContextPath: /
+  adminContextPath: /admin
+  connector:
+    type: http
+    port: 8080
+
+logging:
+  level: INFO
+  loggers:
+    com.example.app: DEBUG
+    org.hibernate.SQL: ALL
+    org.atmosphere: DEBUG
+  appenders:
+    - type: console
