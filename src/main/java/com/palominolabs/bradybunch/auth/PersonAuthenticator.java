@@ -19,15 +19,6 @@ public class PersonAuthenticator implements Authenticator<BasicCredentials, Pers
 
     @Override
     public Optional<Person> authenticate(BasicCredentials credentials) throws AuthenticationException {
-        for (String name : Arrays
-            .asList("ace", "andrew", "drew", "hayden", "manuel", "marshall", "ron", "ryan", "tyler")) {
-            Person person = new Person();
-            person.setName(WordUtils.capitalize(name));
-            person.setEmail(name + "@palominolabs.com");
-            person.setPassword("pal3usrus");
-            personDao.create(person);
-        }
-
         Optional<Person> optional = personDao.findByEmail(credentials.getUsername());
         if (optional.isPresent()) {
             Person person = optional.get();
