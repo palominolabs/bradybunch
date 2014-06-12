@@ -1,9 +1,7 @@
 package com.palominolabs.bradybunch.resources.atmosphere;
 
 import com.palominolabs.bradybunch.EventsLogger;
-import com.palominolabs.bradybunch.core.Message;
 import org.atmosphere.annotation.Broadcast;
-import org.atmosphere.client.TrackMessageSizeFilter;
 import org.atmosphere.config.service.AtmosphereService;
 import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.jersey.Broadcastable;
@@ -30,8 +28,8 @@ public class ChatResource {
     private Broadcaster topic;
 
     @GET
-    public SuspendResponse<Message> subscribe() {
-        return new SuspendResponse.SuspendResponseBuilder<Message>()
+    public SuspendResponse<String> subscribe() {
+        return new SuspendResponse.SuspendResponseBuilder<String>()
             .broadcaster(topic)
             .outputComments(true)
             .addListener(new EventsLogger())
@@ -40,7 +38,7 @@ public class ChatResource {
 
     @POST
     @Broadcast
-    public Broadcastable publish(Message message) {
+    public Broadcastable publish(String message) {
         return new Broadcastable(message, "", topic);
     }
 }

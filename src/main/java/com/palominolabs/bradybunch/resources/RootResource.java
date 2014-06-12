@@ -14,12 +14,12 @@ import javax.ws.rs.core.MediaType;
 
 @Path("/")
 @Produces(MediaType.TEXT_PLAIN)
-public class ProtectedResource {
+public class RootResource {
     private final PersonDAO personDao;
 
     private final ObjectMapper objectMapper;
 
-    public ProtectedResource(PersonDAO personDao, ObjectMapper objectMapper) {
+    public RootResource(PersonDAO personDao, ObjectMapper objectMapper) {
         this.personDao = personDao;
         this.objectMapper = objectMapper;
     }

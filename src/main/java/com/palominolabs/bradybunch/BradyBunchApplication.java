@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.palominolabs.bradybunch.auth.PersonAuthenticator;
 import com.palominolabs.bradybunch.core.Person;
 import com.palominolabs.bradybunch.db.PersonDAO;
-import com.palominolabs.bradybunch.resources.ProtectedResource;
+import com.palominolabs.bradybunch.resources.RootResource;
 import io.dropwizard.Application;
 import io.dropwizard.assets.AssetsBundle;
 import io.dropwizard.auth.basic.BasicAuthProvider;
@@ -56,7 +56,7 @@ public class BradyBunchApplication extends Application<BradyBunchConfiguration> 
 
         environment.jersey().register(new BasicAuthProvider<>(new PersonAuthenticator(personDao), "SUPER SECRET STUFF"));
 
-        environment.jersey().register(new ProtectedResource(personDao, objectMapper));
+        environment.jersey().register(new RootResource(personDao, objectMapper));
 
         initializeAtmosphere(configuration, environment);
     }
