@@ -2,7 +2,6 @@ package com.palominolabs.bradybunch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.palominolabs.bradybunch.auth.PersonAuthenticator;
-import com.palominolabs.bradybunch.cli.CreateUser;
 import com.palominolabs.bradybunch.core.Person;
 import com.palominolabs.bradybunch.db.PersonDAO;
 import com.palominolabs.bradybunch.resources.ProtectedResource;
@@ -39,8 +38,6 @@ public class BradyBunchApplication extends Application<BradyBunchConfiguration> 
 
     @Override
     public void initialize(Bootstrap<BradyBunchConfiguration> bootstrap) {
-        bootstrap.addCommand(new CreateUser());
-
         bootstrap.addBundle(new AssetsBundle());
         bootstrap.addBundle(new MigrationsBundle<BradyBunchConfiguration>() {
             @Override
