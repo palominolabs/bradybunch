@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.palominolabs.bradybunch.core.Person;
 import com.palominolabs.bradybunch.db.PersonDAO;
 import com.palominolabs.bradybunch.views.BradyBunchView;
-import com.palominolabs.bradybunch.views.ChatView;
 import io.dropwizard.auth.Auth;
 import io.dropwizard.hibernate.UnitOfWork;
 
@@ -12,7 +11,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
-import java.util.List;
 
 @Path("/")
 @Produces(MediaType.TEXT_PLAIN)
