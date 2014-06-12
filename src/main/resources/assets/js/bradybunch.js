@@ -21,7 +21,6 @@ BradyBunchRails.Brady._version = undefined;
 BradyBunchRails.Brady._reapIntervalId = undefined;
 BradyBunchRails.Brady._snapIntervalId = undefined;
 BradyBunchRails.Brady._versionIntervalId = undefined;
-BradyBunchRails.Brady._reconnectTimeoutIds = [];
 BradyBunchRails.Brady._squareAssignments = [];
 BradyBunchRails.Brady._users = {};
 BradyBunchRails.Brady._messageBuffer = "";
@@ -75,7 +74,6 @@ BradyBunchRails.Brady.subscribe = function () {
 
             brady._reapIntervalId = setInterval(brady.reap, 11000);
 //            brady._versionIntervalId = setInterval(brady.checkVersion, 11000);
-//            brady._reviveIntervalId = setInterval(brady.revive, 13000);
         },
         onMessage: brady.handleMessage,
         onReconnect: function (request, response) {
@@ -139,10 +137,6 @@ BradyBunchRails.Brady.handleMessage = function(msg) {
     } else if (message.type === 'leave') {
         brady.handleLeave(message);
     }
-};
-
-BradyBunchRails.Brady.revive = function () {
-    BradyBunchRails.Brady._atmosphere.reconnect_channels();
 };
 
 BradyBunchRails.Brady.start = function () {
