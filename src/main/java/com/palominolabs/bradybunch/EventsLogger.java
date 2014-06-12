@@ -51,7 +51,9 @@ public class EventsLogger implements WebSocketEventListener {
     }
 
     public void onBroadcast(AtmosphereResourceEvent event) {
-        logger.info("onBroadcast(): {}", event.getMessage());
+        if (logger.isDebugEnabled()) {
+            logger.debug("onMessage(): {}", event);
+        }
     }
 
     public void onHeartbeat(AtmosphereResourceEvent event) {
@@ -74,9 +76,7 @@ public class EventsLogger implements WebSocketEventListener {
 
     public void onMessage(WebSocketEvent event) {
         if (logger.isDebugEnabled()) {
-            logger.info("onMessage(): {}", event);
-        } else {
-            logger.info("onMessage(): {}", event.type());
+            logger.debug("onMessage(): {}", event);
         }
     }
 

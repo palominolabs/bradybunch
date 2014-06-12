@@ -21,8 +21,8 @@ import javax.ws.rs.core.MediaType;
 @Path("/{topic}")
 @AtmosphereService(broadcaster = JerseyBroadcaster.class)
 @Produces(MediaType.APPLICATION_JSON)
-public class ChatResource {
-    private static final Logger logger = LoggerFactory.getLogger(ChatResource.class);
+public class BradyBunchResource {
+    private static final Logger logger = LoggerFactory.getLogger(BradyBunchResource.class);
 
     @PathParam("topic")
     private Broadcaster topic;
