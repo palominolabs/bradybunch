@@ -17,7 +17,6 @@
 <body>
 
 <div id="brady-screen"
-     data-version="7"
      data-users="${people?html}"
 >
     <div class="brady-row">
@@ -107,8 +106,7 @@
                 bradyContainer = $('#brady-screen'),
                 atmosphere = $.atmosphere,
                 websocketUrl = 'chat/palomino',
-                videoRequiredMask = $('#video-required-mask'),
-                version = bradyContainer.data('version');
+                videoRequiredMask = $('#video-required-mask');
 
         videoRequiredMask.show();
 
@@ -121,7 +119,7 @@
             document.location.href=document.location.href;
         });
 
-        brady.initialize($, bradyContainer, websocketUrl, atmosphere, email, name, '/assets/logo.png', version);
+        brady.initialize($, bradyContainer, websocketUrl, atmosphere, email, name, '/assets/logo.png');
 
         brady.start();
     });

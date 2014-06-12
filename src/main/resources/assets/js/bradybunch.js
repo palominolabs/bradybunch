@@ -17,15 +17,13 @@ BradyBunchRails.Brady._currentVideoSourceIndex = [];
 BradyBunchRails.Brady._roomData = {};
 BradyBunchRails.Brady._snapshotQueues = {};
 BradyBunchRails.Brady._mySnapshot = undefined;
-BradyBunchRails.Brady._version = undefined;
 BradyBunchRails.Brady._reapIntervalId = undefined;
 BradyBunchRails.Brady._snapIntervalId = undefined;
-BradyBunchRails.Brady._versionIntervalId = undefined;
 BradyBunchRails.Brady._squareAssignments = [];
 BradyBunchRails.Brady._users = {};
 BradyBunchRails.Brady._messageBuffer = "";
 
-BradyBunchRails.Brady.initialize = function ($, bradyContainer, websocketUrl, atmosphere, email, name, defaultImage, version) {
+BradyBunchRails.Brady.initialize = function ($, bradyContainer, websocketUrl, atmosphere, email, name, defaultImage) {
     var brady = BradyBunchRails.Brady,
         users = JSON.parse($('#brady-screen').attr('data-users'));
 
@@ -45,7 +43,6 @@ BradyBunchRails.Brady.initialize = function ($, bradyContainer, websocketUrl, at
     BradyBunchRails.Brady._name = name;
     BradyBunchRails.Brady._defaultImage = defaultImage;
     BradyBunchRails.Brady._ctx = BradyBunchRails.Brady._canvasEl.getContext('2d');
-    BradyBunchRails.Brady._version = version;
 
     // Set users from what the server provides
     users.forEach(function(user) {
@@ -73,7 +70,6 @@ BradyBunchRails.Brady.subscribe = function () {
             $(window).on('beforeunload', brady.leave);
 
             brady._reapIntervalId = setInterval(brady.reap, 11000);
-//            brady._versionIntervalId = setInterval(brady.checkVersion, 11000);
         },
         onMessage: brady.handleMessage,
         onReconnect: function (request, response) {
@@ -152,7 +148,6 @@ BradyBunchRails.Brady.stop = function () {
 
     clearInterval(brady._reapIntervalId);
     clearInterval(brady._snapIntervalId);
-    clearInterval(brady._versionIntervalId);
     brady._localMediaStream.stop();
     brady.leave();
     brady._snapshotQueues = {};
@@ -412,17 +407,6 @@ BradyBunchRails.Brady.snapshotQueueIsConstant = function (queue) {
         // If the queue is not full, it is not constant
         return false;
     }
-};
-
-BradyBunchRails.Brady.checkVersion = function () {
-    var brady = BradyBunchRails.Brady;
-
-    brady._atmosphere.trigger('version', {}, function (msg) {
-        if (msg.version != brady._version) {
-            console.log('Detected outdated version.');
-            brady.forceReload();
-        }
-    });
 };
 
 BradyBunchRails.Brady.forceReload = function () {
