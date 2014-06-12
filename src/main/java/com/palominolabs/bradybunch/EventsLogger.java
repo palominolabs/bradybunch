@@ -73,7 +73,11 @@ public class EventsLogger implements WebSocketEventListener {
     }
 
     public void onMessage(WebSocketEvent event) {
-        logger.info("onMessage(): {}", event);
+        if (logger.isDebugEnabled()) {
+            logger.info("onMessage(): {}", event);
+        } else {
+            logger.info("onMessage(): {}", event.type());
+        }
     }
 
     public void onClose(WebSocketEvent event) {
