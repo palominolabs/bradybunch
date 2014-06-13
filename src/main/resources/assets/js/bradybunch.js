@@ -23,7 +23,7 @@ BradyBunchRails.Brady._squareAssignments = [];
 BradyBunchRails.Brady._users = {};
 BradyBunchRails.Brady._messageBuffer = "";
 
-BradyBunchRails.Brady.initialize = function ($, bradyContainer, websocketUrl, atmosphere, email, name, defaultImage) {
+BradyBunchRails.Brady.initialize = function ($, bradyContainer, websocketUrl, atmosphere, email, name) {
     var brady = BradyBunchRails.Brady,
         users = JSON.parse($('#brady-screen').attr('data-users'));
 
@@ -41,7 +41,6 @@ BradyBunchRails.Brady.initialize = function ($, bradyContainer, websocketUrl, at
     BradyBunchRails.Brady._websocketUrl = websocketUrl;
     BradyBunchRails.Brady._email = email;
     BradyBunchRails.Brady._name = name;
-    BradyBunchRails.Brady._defaultImage = defaultImage;
     BradyBunchRails.Brady._ctx = BradyBunchRails.Brady._canvasEl.getContext('2d');
 
     // Set users from what the server provides

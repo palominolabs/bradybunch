@@ -22,21 +22,21 @@
     <div class="brady-row">
         <div class="brady" square-id="0" data-member-email="">
             <a class="call-overlay"></a>
-            <img src="/assets/logo.png" alt=""/>
+            <img src="/assets/images/logo.png" alt=""/>
             <div class="controls">
                 <span class="name"></span>
             </div>
         </div>
         <div class="brady" square-id="1" data-member-email="">
             <a class="call-overlay"></a>
-            <img src="/assets/logo.png" alt=""/>
+            <img src="/assets/images/logo.png" alt=""/>
             <div class="controls">
                 <span class="name"></span>
             </div>
         </div>
         <div class="brady" square-id="2" data-member-email="">
             <a class="call-overlay"></a>
-            <img src="/assets/logo.png" alt=""/>
+            <img src="/assets/images/logo.png" alt=""/>
             <div class="controls">
                 <span class="name"></span>
             </div>
@@ -46,21 +46,21 @@
     <div class="brady-row">
         <div class="brady" square-id="3" data-member-email="">
             <a class="call-overlay"></a>
-            <img src="/assets/logo.png" alt=""/>
+            <img src="/assets/images/logo.png" alt=""/>
             <div class="controls">
                 <span class="name"></span>
             </div>
         </div>
         <div class="brady" square-id="4" data-member-email="">
             <a class="call-overlay"></a>
-            <img src="/assets/logo.png" alt=""/>
+            <img src="/assets/images/logo.png" alt=""/>
             <div class="controls">
                 <span class="name"></span>
             </div>
         </div>
         <div class="brady" square-id="4" data-member-email="">
             <a class="call-overlay"></a>
-            <img src="/assets/logo.png" alt=""/>
+            <img src="/assets/images/logo.png" alt=""/>
             <div class="controls">
                 <span class="name"></span>
             </div>
@@ -70,21 +70,21 @@
     <div class="brady-row">
         <div class="brady" square-id="6" data-member-email="">
             <a class="call-overlay"></a>
-            <img src="/assets/logo.png" alt=""/>
+            <img src="/assets/images/logo.png" alt=""/>
             <div class="controls">
                 <span class="name"></span>
             </div>
         </div>
         <div class="brady" square-id="7" data-member-email="">
             <a class="call-overlay"></a>
-            <img src="/assets/logo.png" alt=""/>
+            <img src="/assets/images/logo.png" alt=""/>
             <div class="controls">
                 <span class="name"></span>
             </div>
         </div>
         <div class="brady" square-id="8" data-member-email="">
             <a class="call-overlay"></a>
-            <img src="/assets/logo.png" alt=""/>
+            <img src="/assets/images/logo.png" alt=""/>
             <div class="controls">
                 <span class="name"></span>
             </div>
@@ -119,7 +119,7 @@
             document.location.href=document.location.href;
         });
 
-        brady.initialize($, bradyContainer, websocketUrl, atmosphere, email, name, '/assets/logo.png');
+        brady.initialize($, bradyContainer, websocketUrl, atmosphere, email, name);
 
         brady.start();
     });
