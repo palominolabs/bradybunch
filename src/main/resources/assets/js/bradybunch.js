@@ -11,7 +11,7 @@ BradyBunchRails.Brady._videoEl = undefined;
 BradyBunchRails.Brady._canvasEl = undefined;
 BradyBunchRails.Brady._ctx = undefined;
 BradyBunchRails.Brady._localMediaStream = undefined;
-BradyBunchRails.Brady._defaultImage = undefined;
+BradyBunchRails.Brady._defaultImage = '/assets/images/logo.png';
 BradyBunchRails.Brady._videoSourceIds = [];
 BradyBunchRails.Brady._currentVideoSourceIndex = [];
 BradyBunchRails.Brady._roomData = {};
@@ -211,6 +211,7 @@ BradyBunchRails.Brady.takeSnapshot = function () {
 
 BradyBunchRails.Brady.snap = function () {
     var brady = BradyBunchRails.Brady;
+    console.log("Taking snapshot..." + new Date().toUTCString());
 
     brady._mySnapshot = brady.takeSnapshot();
 
@@ -219,7 +220,15 @@ BradyBunchRails.Brady.snap = function () {
         email: brady._email,
         snapshot: brady._mySnapshot
     };
-    brady._channel.push($.stringifyJSON(data));
+    brady._channel.push({
+        data: $.stringifyJSON(data),
+        onError: function(msg) {
+            console.log("Error sending snapshot " + msg);
+        },
+        onClientTimeout: function(msg) {
+            console.log("Timeout sending snapshot " + msg);
+        }
+    });
 };
 
 BradyBunchRails.Brady.handleRoomUpdate = function (data) {
@@ -227,10 +236,11 @@ BradyBunchRails.Brady.handleRoomUpdate = function (data) {
         email = data.email,
         squareId = brady._squareAssignments.indexOf(email),
         square;
+    console.log(email + ' sent us an update');
 
     // Assign this new person a square
     if (squareId == -1) {
-        console.log("New person: " + email);
+        console.log(email + " is someone we don't know");
         brady._squareAssignments.push(email);
         brady._squareAssignments.sort();
         squareId = brady._squareAssignments.indexOf(email);
@@ -240,6 +250,7 @@ BradyBunchRails.Brady.handleRoomUpdate = function (data) {
 
     // Initialize their snapshot queue
     if (brady._snapshotQueues[email] == null) {
+        console.log(email + " is new, making snapshot queue");
         brady._snapshotQueues[email] = new BradyBunchRails.SnapshotQueue();
     }
 
@@ -248,6 +259,7 @@ BradyBunchRails.Brady.handleRoomUpdate = function (data) {
         md5: CryptoJS.MD5(data.snapshot).toString()
     });
     if (brady.snapshotQueueIsConstant(brady._snapshotQueues[email])) {
+        console.log(email + " became idle");
         square.addClass('idle');
     } else {
         square.removeClass('idle');
@@ -295,9 +307,12 @@ BradyBunchRails.Brady.addHappyDance = function(square, email) {
 
 BradyBunchRails.Brady.handleLeave = function (data) {
     var brady = BradyBunchRails.Brady,
-        email = data.email;
+        email = data.email,
+        squareId = brady._squareAssignments.indexOf(email),
+        square = brady._container.find('.brady[square-id="' + squareId + '"]').first();
+    console.log(email + " left; cleaning up after them");
 
-    brady.clearSquares();
+    brady.clearSquare(square);
 
     delete brady._snapshotQueues[email];
     delete brady._roomData[email];
@@ -342,17 +357,12 @@ BradyBunchRails.Brady.assignSquares = function () {
     }
 };
 
-BradyBunchRails.Brady.clearSquares = function () {
-    var brady = BradyBunchRails.Brady,
-        squares = brady._container.find('.brady');
+BradyBunchRails.Brady.clearSquare = function (square) {
+    var brady = BradyBunchRails.Brady;
 
-    for (var i = 0; i < squares.length; i++) {
-        var square = brady.$(squares[i]);
-
-        brady.updateSquare(square, '', brady._defaultImage);
-        square.unbind('mouseenter');
-        square.unbind('mouseleave');
-    }
+    brady.updateSquare(square, '', brady._defaultImage);
+    square.unbind('mouseenter');
+    square.unbind('mouseleave');
 };
 
 BradyBunchRails.Brady.updateSquare = function (square, email, src) {
