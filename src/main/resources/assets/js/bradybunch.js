@@ -73,10 +73,6 @@ BradyBunchRails.Brady.subscribe = function () {
         onMessage: brady.handleMessage,
         onReconnect: function (request, response) {
             console.log("Reconnected");
-        },
-        onError: function (msg) {
-            console.log("Connection error");
-            brady.$(brady).trigger('authenticationfailed');
         }
     });
 };
@@ -120,8 +116,9 @@ BradyBunchRails.Brady.handleMessage = function(msg) {
                 return;
             } else {
                 // Unexpected error
-                console.log("Error parsing JSON: ", e);
-                console.log("Buffer is: " + brady._messageBuffer);
+                console.log("Error parsing JSON; clearing buffer: ", e);
+                console.log("Buffer was: " + brady._messageBuffer);
+                brady._messageBuffer = "";
                 return;
             }
         }
@@ -220,15 +217,7 @@ BradyBunchRails.Brady.snap = function () {
         email: brady._email,
         snapshot: brady._mySnapshot
     };
-    brady._channel.push({
-        data: $.stringifyJSON(data),
-        onError: function(msg) {
-            console.log("Error sending snapshot " + msg);
-        },
-        onClientTimeout: function(msg) {
-            console.log("Timeout sending snapshot " + msg);
-        }
-    });
+    brady._channel.push($.stringifyJSON(data));
 };
 
 BradyBunchRails.Brady.handleRoomUpdate = function (data) {
