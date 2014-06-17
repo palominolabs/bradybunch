@@ -23,7 +23,7 @@ BradyBunchRails.Brady._squareAssignments = [];
 BradyBunchRails.Brady._users = {};
 BradyBunchRails.Brady._messageBuffer = "";
 
-BradyBunchRails.Brady.initialize = function ($, bradyContainer, websocketUrl, atmosphere, email, name) {
+BradyBunchRails.Brady.initialize = function ($, bradyContainer, websocketUrl, email, name) {
     var brady = BradyBunchRails.Brady,
         users = JSON.parse($('#brady-screen').attr('data-users'));
 
@@ -37,7 +37,6 @@ BradyBunchRails.Brady.initialize = function ($, bradyContainer, websocketUrl, at
 
     BradyBunchRails.Brady._videoEl = brady._container.find('video')[0];
     BradyBunchRails.Brady._canvasEl = brady._container.find('canvas')[0];
-    BradyBunchRails.Brady._atmosphere = atmosphere;
     BradyBunchRails.Brady._websocketUrl = websocketUrl;
     BradyBunchRails.Brady._email = email;
     BradyBunchRails.Brady._name = name;
@@ -52,37 +51,54 @@ BradyBunchRails.Brady.initialize = function ($, bradyContainer, websocketUrl, at
     brady.assignSquares();
 
     brady.subscribe();
+
+    brady._reapIntervalId = setInterval(brady.reap, 11000);
 };
 
 BradyBunchRails.Brady.subscribe = function () {
     var brady = BradyBunchRails.Brady;
+
+    console.log("Subscribing websocket");
+    BradyBunchRails.Brady._atmosphere = $.atmosphere;
 
     brady._channel = brady._atmosphere.subscribe({
         url: brady._websocketUrl,
         contentType: 'application/json',
         logLevel: 'debug',
         transport: 'websocket',
-        reconnectInterval: 10000,
-        onOpen: function (msg) {
-            brady.$(brady).trigger('authenticated');
-
+        reconnectInterval: 30000,
+        connectTimeout: 10000,
+        onOpen: function(msg) {
             $(window).on('beforeunload', brady.leave);
-
-            brady._reapIntervalId = setInterval(brady.reap, 11000);
         },
-        onMessage: brady.handleMessage,
-        onReconnect: function (request, response) {
+        onReconnect: function() {
             console.log("Reconnected");
-        }
+        },
+        onError: function() {
+            console.log("WebSocket error");
+        },
+        onMessage: brady.handleMessage
     });
 };
 
+BradyBunchRails.Brady.resubscribe = function() {
+    var brady = BradyBunchRails.Brady;
+
+    // Unsubscribing hangs because it tries to cleanly tear down the connection
+    // Forcibly delete it instead :-/
+    console.log("Unsubscribing websocket");
+    delete BradyBunchRails.Brady._atmosphere;
+
+    brady.subscribe();
+};
+
 BradyBunchRails.Brady.handleMessage = function(msg) {
+    // Split of the message size
     var brady = BradyBunchRails.Brady,
         body = msg.responseBody.split('|')[1],
         message;
 
-    if (brady._messageBuffer === "") {
+    if (brady._messageBuffer === undefined) {
         // New message
         try {
             message = $.parseJSON(body);
@@ -97,7 +113,7 @@ BradyBunchRails.Brady.handleMessage = function(msg) {
                 console.log("Error parsing JSON; clearing buffer: ", e);
                 console.log("Buffer was empty");
                 console.log("New message: " + body);
-                brady._messageBuffer = "";
+                brady._messageBuffer = undefined;
                 return;
             }
         }
@@ -108,8 +124,8 @@ BradyBunchRails.Brady.handleMessage = function(msg) {
         // See if it parses now
         try {
             message = $.parseJSON(brady._messageBuffer);
-            // Clear the buffer
-            brady._messageBuffer = "";
+            // Successfully parsed, clear the buffer
+            brady._messageBuffer = undefined;
         } catch (e) {
             if (e.name === "SyntaxError" && e.message === "Unexpected end of input") {
                 // Still not a full message
@@ -118,7 +134,7 @@ BradyBunchRails.Brady.handleMessage = function(msg) {
                 // Unexpected error
                 console.log("Error parsing JSON; clearing buffer: ", e);
                 console.log("Buffer was: " + brady._messageBuffer);
-                brady._messageBuffer = "";
+                brady._messageBuffer = undefined;
                 return;
             }
         }
@@ -294,6 +310,11 @@ BradyBunchRails.Brady.addHappyDance = function(square, email) {
     });
 };
 
+BradyBunchRails.Brady.removeHappyDance = function(square) {
+    square.unbind('mouseenter');
+    square.unbind('mouseleave');
+};
+
 BradyBunchRails.Brady.handleLeave = function (data) {
     var brady = BradyBunchRails.Brady,
         email = data.email,
@@ -301,7 +322,16 @@ BradyBunchRails.Brady.handleLeave = function (data) {
         square = brady._container.find('.brady[square-id="' + squareId + '"]').first();
     console.log(email + " left; cleaning up after them");
 
-    brady.clearSquare(square);
+    // TODO kind of hackey
+    if (email === brady._email) {
+        console.log("Looks like we left!");
+        brady._messageBuffer = undefined;
+        brady.resubscribe();
+        return;
+    }
+
+    brady.updateSquare(square, '', brady._defaultImage);
+    brady.removeHappyDance(square);
 
     delete brady._snapshotQueues[email];
     delete brady._roomData[email];
@@ -344,14 +374,6 @@ BradyBunchRails.Brady.assignSquares = function () {
         square.find('.name').html(name);
         square.toggleClass('occupied', !!email);
     }
-};
-
-BradyBunchRails.Brady.clearSquare = function (square) {
-    var brady = BradyBunchRails.Brady;
-
-    brady.updateSquare(square, '', brady._defaultImage);
-    square.unbind('mouseenter');
-    square.unbind('mouseleave');
 };
 
 BradyBunchRails.Brady.updateSquare = function (square, email, src) {
@@ -405,10 +427,4 @@ BradyBunchRails.Brady.snapshotQueueIsConstant = function (queue) {
         // If the queue is not full, it is not constant
         return false;
     }
-};
-
-BradyBunchRails.Brady.forceReload = function () {
-    var brady = BradyBunchRails.Brady;
-    brady.stop();
-    brady.$(brady).trigger('forcereload');
 };

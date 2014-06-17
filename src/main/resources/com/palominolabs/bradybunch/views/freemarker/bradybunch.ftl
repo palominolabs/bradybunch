@@ -104,7 +104,6 @@
                 email = '${currentUser.email?html}',
                 name = '${currentUser.name?html}',
                 bradyContainer = $('#brady-screen'),
-                atmosphere = $.atmosphere,
                 websocketUrl = 'chat/palomino',
                 videoRequiredMask = $('#video-required-mask');
 
@@ -119,7 +118,7 @@
             document.location.href=document.location.href;
         });
 
-        brady.initialize($, bradyContainer, websocketUrl, atmosphere, email, name);
+        brady.initialize($, bradyContainer, websocketUrl, email, name);
 
         brady.start();
     });
