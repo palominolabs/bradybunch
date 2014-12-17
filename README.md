@@ -1,51 +1,36 @@
-# Introduction
+Show live views of your team in a Brady Bunch style picture window.  A Dropwizard based application that runs on Heroku.
 
-The drop wizard example application was developed to, as its name implies, provide examples of some of the features
-present in drop wizard.
+# Development
 
-# Overview
+Build the application with Maven:
 
-Included with this application is an example of the optional db API module. The examples provided illustrate a few of
-the features available in [JDBI](http://jdbi.org), along with demonstrating how these are used from within dropwizard.
+    mvn package
 
-This database example is comprised of the following classes.
+Create a MySQL database & user corresponding to the information in
+config-dev.yml, then initialize the DB with:
 
-* The `PersonDAO` illustrates using the [SQL Object Queries](http://jdbi.org/sql_object_api_queries/) and string template
-features in JDBI.
+    java -jar target/bradybunch-1.0-SNAPSHOT.jar db migrate config-dev.yml
 
-* The `PeopleDAO.sql.stg` stores all the SQL statements for use in the `PersonDAO`, note this is located in the
-src/resources under the same path as the `PersonDAO` class file.
+With the DB setup, you can run the development server:
 
-* `migrations.xml` illustrates the usage of `dropwizard-migrations` which can create your database prior to running
-your application for the first time.
+    java -jar target/bradybunch-1.0-SNAPSHOT.jar server config-dev.yml
 
-* The `PersonResource` and `PeopleResource` are the REST resource which use the PersonDAO to retrieve data from the database, note the injection
-of the PersonDAO in their constructors.
+The server listens on 0.0.0.0:8080.
 
-As with all the modules the db example is wired up in the `initialize` function of the `HelloWorldApplication`.
+# Users
 
-# Running The Application
+When I wrote this, I couldn't figure out how the Dropwizard CLI works and I
+still don't know how to write a CLI command, so create users by putting
+something like this into the PersonAuthenticator.authenticate() method:
 
-To test the example application run the following commands.
+    for (String name : Arrays
+        .asList("jimmy", "johnny", "bobby", "sue")) {
+        Person person = new Person();
+        person.setName(WordUtils.capitalize(name));
+        person.setEmail(name + "@palominolabs.com");
+        person.setPassword("gh0stbusters");
+        personDao.create(person);
+    }
 
-* To package the example run.
-
-        mvn package
-
-* To setup the h2 database run.
-
-        java -jar target/dropwizard-example-0.7.1-SNAPSHOT.jar db migrate example.yml
-
-* To run the server run.
-
-        java -jar target/dropwizard-example-0.7.1-SNAPSHOT.jar server example.yml
-
-* To hit the Hello World example (hit refresh a few times).
-
-	http://localhost:8080/hello-world
-
-* To post data into the application.
-
-	curl -H "Content-Type: application/json" -X POST -d '{"fullName":"Other Person","jobTitle":"Other Title"}' http://localhost:8080/people
-	
-	open http://localhost:8080/people
+Re-`mvn package`, run, and the next time someone trys to login the app will create all
+of those users.  Yay security!
